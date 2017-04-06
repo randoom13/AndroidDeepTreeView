@@ -3,53 +3,87 @@ package am.android.example.android.deeptreeview;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import am.android.example.android.deeptreeview.nodes.LeafNode;
 import am.android.example.android.deeptreeview.nodes.TreeNode;
 
-/**
- * Created by akhlivnyuk on 3/30/2017.
- */
 final class DummyNodesFactory {
-    private static String toString(int[] numbers) {
-        StringBuilder builder = new StringBuilder();
-        for (int number : numbers) {
-            Object info = builder.length() > 0 ? "," + number : number;
-            builder.append(info);
+    private static Integer sNodeCount = 0;
+
+    private static void nextLocation(List<Integer> location, int maxLevelCount) {
+        int increment = 1;
+        for (int index = 0; index < location.size() && increment == 1; index++) {
+            int num = location.get(index) + increment;
+            if (num == maxLevelCount) {
+                location.set(index, 0);
+            } else {
+                location.set(index, num);
+                increment--;
+            }
         }
-        return builder.toString();
+        if (increment == 1)
+            location.add(0);
     }
 
-    private static void createNodes(int maxLevelCount, LeafNode<String> node){
+    public static LeafNode<String> getRootNode(int maxLevelCount) {
+        TreeNode<String> rootNode = new TreeNode<String>();
+        rootNode.setData("Root");
+        List<Integer> location = new ArrayList<Integer>();
+        while (true) {
+            if (location.size() >= maxLevelCount)
+                break;
+
+            LeafNode<String> node = LeafNode.Helper.getNodeBy(rootNode, location);
+            addNodes(node, maxLevelCount, node.getLevel() + 1 == maxLevelCount);
+            nextLocation(location, maxLevelCount);
+        }
+        return rootNode;
+    }
+
+    private static void addNodes(LeafNode<String> rootNode, int maxLevelCount, boolean isLastNode) {
+        List<LeafNode<String>> addingNodes = new ArrayList<LeafNode<String>>();
+        for (int index = 0; index < maxLevelCount; index++) {
+            LeafNode<String> node = isLastNode ? new LeafNode<String>() : new TreeNode<String>();
+            addingNodes.add(node);
+        }
+        rootNode.addAll(addingNodes);
+        for (LeafNode<String> node : addingNodes) {
+            String data = "node " + Arrays.toString(LeafNode.Helper.getTreeLocation(node));
+            node.setData(data);
+        }
+    }
+
+    private static void createNodes(int maxLevelCount, LeafNode<String> node) {
         boolean isLastLevel = node.getLevel() + 1 >= maxLevelCount;
         List<LeafNode<String>> addedChildren = new ArrayList<>();
-        for (int index=0; index< maxLevelCount; index++) {
+        for (int index = 0; index < maxLevelCount; index++) {
             LeafNode<String> child = isLastLevel ? new LeafNode<String>(false) :
                     new TreeNode<String>(false);
             addedChildren.add(child);
         }
         node.addAll(addedChildren);
-        counter += maxLevelCount;
+        sNodeCount += maxLevelCount;
         for (LeafNode<String> child : addedChildren) {
-            String data = "node " + toString(LeafNode.Helper.getTreeLocation(child));
+            String data = "node " + Arrays.toString(LeafNode.Helper.getTreeLocation(child));
+            ;
             child.setData(data);
             if (!isLastLevel)
                 createNodes(maxLevelCount, child);
         }
     }
 
-    private static Integer counter = 0;
-    public static LeafNode<String> getRootNodeV2(int maxLevelCount) {
+    public static LeafNode<String> getRootNodeV3(int maxLevelCount) {
         LeafNode<String> rootNode = new TreeNode<String>(true);
         rootNode.setData("Root");
-        counter++;
+        sNodeCount++;
         createNodes(maxLevelCount, rootNode);
-        Log.d("test count", counter.toString());
+        Log.d("INFO", String.format("created %d node(s)", sNodeCount));
         return rootNode;
     }
 
-    public static LeafNode<String> getRootNode(int maxLevelCount) {
+    public static LeafNode<String> getRootNodeV2(int maxLevelCount) {
         LeafNode<String> rootNode = new TreeNode<String>(true);
         rootNode.setData("Root");
         List<LeafNode<String>> nestedNodes = new ArrayList<LeafNode<String>>();
@@ -62,7 +96,7 @@ final class DummyNodesFactory {
                     LeafNode<String> child = isLastLevel ? new LeafNode<String>(false) :
                             new TreeNode<String>(false);
                     workNode.add(child);
-                    String data = "node " + toString(LeafNode.Helper.getTreeLocation(child));
+                    String data = "node " + Arrays.toString(LeafNode.Helper.getTreeLocation(child));
                     child.setData(data);
                     nestedNodes.add(child);
                 }

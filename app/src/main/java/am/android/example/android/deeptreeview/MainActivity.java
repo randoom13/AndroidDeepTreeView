@@ -15,7 +15,7 @@ public class MainActivity extends ListActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        new CreateAdapterDataThread(5).run();
+        new CreateAdapterDataThread(7).run();
     }
 
     private void fillListView(final List<LeafNode<String>> rootNodes){
@@ -38,7 +38,7 @@ public class MainActivity extends ListActivity{
         @Override
         public void run() {
             List<LeafNode<String>> rootNodes = new ArrayList<LeafNode<String>>();
-            rootNodes.add(DummyNodesFactory.getRootNodeV2(mMaxLevel));
+            rootNodes.add(DummyNodesFactory.getRootNode(mMaxLevel));
             fillListView(rootNodes);
         }
     }

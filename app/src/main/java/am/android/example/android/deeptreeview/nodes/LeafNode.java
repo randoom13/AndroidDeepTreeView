@@ -193,13 +193,14 @@ public class LeafNode<T> {
         }
 
         public static<T> LeafNode<T> getNodeBy(LeafNode<T> node, List<Integer> location) {
+            LeafNode<T> resultNode = node;
             for (int index : location) {
-                if (index < node.mChildren.size())
-                    node = node.mChildren.get(index);
+                if (index < resultNode.mChildren.size())
+                    resultNode = resultNode.mChildren.get(index);
                 else
                     return null;
             }
-            return node;
+            return resultNode;
         }
 
         public static int[] getTreeLocation(LeafNode node) {
