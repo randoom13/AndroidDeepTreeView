@@ -13,9 +13,6 @@ import am.android.example.android.deeptreeview.nodes.LeafNode;
 import am.android.example.android.deeptreeview.nodes.listeners.NodeEventArgs;
 import am.android.example.android.deeptreeview.nodes.listeners.NodeFlatListUpdateListener;
 
-/**
- * Created by akhlivnyuk on 3/27/2017.
- */
 public abstract class BaseDeepTreeViewAdapter<T, H extends ViewHolder> extends BaseAdapter {
     private final Activity mActivity;
     private List<LeafNode<T>> mRootNodes;
@@ -100,13 +97,14 @@ public abstract class BaseDeepTreeViewAdapter<T, H extends ViewHolder> extends B
         mActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                    notifyDataSetChanged();
+                notifyDataSetChanged();
             }
         });
     }
 
     private class UpdateTreeThread extends Thread {
         private LeafNode<T> mNode;
+
         public UpdateTreeThread(LeafNode<T> node) {
             super();
             mNode = node;

@@ -8,9 +8,6 @@ import java.util.Set;
 
 import am.android.example.android.deeptreeview.nodes.listeners.NodeEventArgs;
 
-/**
- * Created by akhlivnyuk on 3/27/2017.
- */
 public class TreeNode<T> extends LeafNode<T> {
     public TreeNode() {
         super();
@@ -22,17 +19,16 @@ public class TreeNode<T> extends LeafNode<T> {
 
     private void detach(LeafNode<T> child) {
         if (!isTop(child))
-            if(child.mParent.mChildren.contains(child)) {
-               child.mParent.remove(child);
-        }
-        else child.mParent = null;
+            if (child.mParent.mChildren.contains(child)) {
+                child.mParent.remove(child);
+            } else child.mParent = null;
     }
 
     private void detachAll(Collection<? extends LeafNode<T>> children) {
         List<LeafNode<T>> detachingChildren = new ArrayList<LeafNode<T>>();
         Set<LeafNode<T>> parents = new HashSet<LeafNode<T>>();
         for (LeafNode<T> child : children) {
-                if (isTop(child))
+            if (isTop(child))
                 continue;
 
             if (!child.mParent.mChildren.contains(child)) {
@@ -90,7 +86,7 @@ public class TreeNode<T> extends LeafNode<T> {
             child.mParent = null;
         }
         if (isExpanded())
-           updateFlatList();
+            updateFlatList();
     }
 
     @Override
@@ -98,7 +94,7 @@ public class TreeNode<T> extends LeafNode<T> {
         mChildren.remove(child);
         child.mParent = null;
         if (isExpanded())
-           updateFlatList();
+            updateFlatList();
     }
 
     public void attachAll(Collection<? extends LeafNode<T>> children) {

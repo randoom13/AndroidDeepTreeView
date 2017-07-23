@@ -5,14 +5,12 @@ import am.android.example.android.deeptreeview.nodes.listeners.NodeEventArgs;
 import am.android.example.android.deeptreeview.nodes.listeners.NodeExpandedListener;
 import am.android.example.android.deeptreeview.nodes.listeners.NodeFlatListUpdateListener;
 
-/**
- * Created by akhlivnyuk on 3/29/2017.
- */
 public class NodeEventMessanger {
 
     private NodeCollapsedListener mNodeCollapsedListener = null;
     private NodeExpandedListener mNodeExpandedListener = null;
     private NodeFlatListUpdateListener mNodeFlatListUpdateListener = null;
+
     public void subscribe(NodeCollapsedListener subscriber) {
         mNodeCollapsedListener = subscriber;
     }
@@ -26,13 +24,14 @@ public class NodeEventMessanger {
     }
 
     public void unSubscribeTreeUpdateListener() {
-       mNodeFlatListUpdateListener = null;
+        mNodeFlatListUpdateListener = null;
     }
+
     public void unSubscribeExpandedListener() {
         mNodeExpandedListener = null;
     }
 
-    public void unSubscribeCollapsedListener () {
+    public void unSubscribeCollapsedListener() {
         mNodeCollapsedListener = null;
     }
 
@@ -41,13 +40,13 @@ public class NodeEventMessanger {
             mNodeFlatListUpdateListener.nodeFlatListUpdated(sender, args);
     }
 
-    void notifyNodeExpanded(Object  sender, NodeEventArgs args) {
+    void notifyNodeExpanded(Object sender, NodeEventArgs args) {
         if (mNodeExpandedListener != null)
-                mNodeExpandedListener.nodeExpanded(sender, args);
+            mNodeExpandedListener.nodeExpanded(sender, args);
     }
 
     void notifyNodeCollapsed(Object sender, NodeEventArgs args) {
-        if (mNodeCollapsedListener!= null)
-              mNodeCollapsedListener.nodeCollapsed(sender, args);
+        if (mNodeCollapsedListener != null)
+            mNodeCollapsedListener.nodeCollapsed(sender, args);
     }
 }

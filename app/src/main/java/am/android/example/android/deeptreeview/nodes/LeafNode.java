@@ -7,26 +7,13 @@ import java.util.List;
 
 import am.android.example.android.deeptreeview.nodes.listeners.NodeEventArgs;
 
-/**
- * Created by akhlivnyuk on 3/27/2017.
- */
 public class LeafNode<T> {
-    public T getData() {
-        return mData;
-    }
-
-    public void setData(T data) {
-        this.mData = data;
-    }
-
-    private T mData;
     protected List<LeafNode<T>> mFlatList = new ArrayList<LeafNode<T>>();
-    private NodeEventMessanger mEventMessanger;
-
     protected LeafNode<T> mParent;
     protected List<LeafNode<T>> mChildren = new ArrayList<LeafNode<T>>();
-
     protected boolean mIsExpanded = false;
+    private T mData;
+    private NodeEventMessanger mEventMessanger;
     private boolean mAutoUpdate = true;
 
     public LeafNode(boolean hasEventMessenger) {
@@ -44,28 +31,37 @@ public class LeafNode<T> {
         return baseNode.mParent == null;
     }
 
+    public T getData() {
+        return mData;
+    }
+
+    public void setData(T data) {
+        this.mData = data;
+    }
+
     public NodeEventMessanger getEventMessanger() {
         return mEventMessanger;
     }
 
     void notifyExpanded(NodeEventArgs args) {
-        if (mEventMessanger !=null)
+        if (mEventMessanger != null)
             mEventMessanger.notifyNodeExpanded(this, args);
 
-        if (args.isHandled() || args.getSource()!= this)
+        if (args.isHandled() || args.getSource() != this)
             return;
-            LeafNode<T> currentNode = this;
-            while (!isTop(currentNode)) {
-                args.setFlatListChanged(args.isFlatListChanged() && currentNode.mParent.isExpanded());
-                currentNode.mParent.notifyExpanded(args);
-                    if (args.isHandled())
-                        return;
-                currentNode = currentNode.mParent;
+
+        LeafNode<T> currentNode = this;
+        while (!isTop(currentNode)) {
+            args.setFlatListChanged(args.isFlatListChanged() && currentNode.mParent.isExpanded());
+            currentNode.mParent.notifyExpanded(args);
+            if (args.isHandled())
+                return;
+            currentNode = currentNode.mParent;
         }
     }
 
     void notifyCollapsed(NodeEventArgs args) {
-        if (mEventMessanger !=null)
+        if (mEventMessanger != null)
             mEventMessanger.notifyNodeCollapsed(this, args);
 
         if (args.isHandled() || args.getSource() != this)
@@ -76,15 +72,15 @@ public class LeafNode<T> {
             args.setFlatListChanged(args.isFlatListChanged() && currentNode.mParent.isExpanded());
             currentNode.mParent.notifyCollapsed(args);
             if (args.isHandled())
-                      return;
+                return;
             currentNode = currentNode.mParent;
-            }
+        }
     }
 
     void notifyFlatListUpdated(NodeEventArgs args) {
-        if (mEventMessanger !=null)
+        if (mEventMessanger != null)
             mEventMessanger.notifyNodeTreeListUpdate(this, args);
-        if (args.isHandled() || args.getSource()!= this)
+        if (args.isHandled() || args.getSource() != this)
             return;
 
         LeafNode<T> currentNode = this;
@@ -136,14 +132,14 @@ public class LeafNode<T> {
     }
 
     public void updateFlatList() {
-            updateSelfFlatList();
-            updateParentFlatList();
-            notifyFlatListUpdated(new NodeEventArgs(this));
+        updateSelfFlatList();
+        updateParentFlatList();
+        notifyFlatListUpdated(new NodeEventArgs(this));
     }
 
     public void updateParentFlatList() {
         LeafNode<T> parent = mParent;
-        while (parent != null  && parent.isAutoUpdate() && parent.isExpanded()) {
+        while (parent != null && parent.isAutoUpdate() && parent.isExpanded()) {
             parent.updateSelfFlatList();
             parent = parent.mParent;
         }
@@ -151,7 +147,7 @@ public class LeafNode<T> {
 
     public LeafNode<T> getTopParent() {
         LeafNode<T> node = this.mParent;
-        while (node != null && node.mParent != null){
+        while (node != null && node.mParent != null) {
             node = node.mParent;
         }
         return node;
@@ -165,7 +161,7 @@ public class LeafNode<T> {
         throw new UnsupportedOperationException();
     }
 
-    public  void add(LeafNode<T> child) {
+    public void add(LeafNode<T> child) {
         throw new UnsupportedOperationException();
     }
 
@@ -178,7 +174,7 @@ public class LeafNode<T> {
     }
 
     public static final class Helper {
-        public static<T> List<LeafNode<T>> getExpandedNodes(LeafNode<T> node){
+        public static <T> List<LeafNode<T>> getExpandedNodes(LeafNode<T> node) {
             List<LeafNode<T>> expandedNodes = new ArrayList<LeafNode<T>>();
             List<LeafNode<T>> visitedNodes = new ArrayList<LeafNode<T>>();
             visitedNodes.add(node);
@@ -192,7 +188,7 @@ public class LeafNode<T> {
             return expandedNodes;
         }
 
-        public static<T> LeafNode<T> getNodeBy(LeafNode<T> node, List<Integer> location) {
+        public static <T> LeafNode<T> getNodeBy(LeafNode<T> node, List<Integer> location) {
             LeafNode<T> resultNode = node;
             for (int index : location) {
                 if (index < resultNode.mChildren.size())
@@ -214,7 +210,7 @@ public class LeafNode<T> {
             return location;
         }
 
-        public static<T> void collapseAll(LeafNode<T> node, boolean isOnlyVisible) {
+        public static <T> void collapseAll(LeafNode<T> node, boolean isOnlyVisible) {
             List<LeafNode<T>> visitedNodes = new ArrayList<LeafNode<T>>();
             visitedNodes.add(node);
             while (!visitedNodes.isEmpty()) {
@@ -228,7 +224,7 @@ public class LeafNode<T> {
             }
         }
 
-        public static<T> void expandAll(LeafNode<T> node) {
+        public static <T> void expandAll(LeafNode<T> node) {
             List<LeafNode<T>> collapsedNodes = new ArrayList<LeafNode<T>>();
             List<LeafNode<T>> visitedNodes = new ArrayList<LeafNode<T>>();
             visitedNodes.add(node);

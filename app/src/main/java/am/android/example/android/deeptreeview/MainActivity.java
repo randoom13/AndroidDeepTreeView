@@ -9,7 +9,7 @@ import java.util.List;
 import am.android.example.android.deeptreeview.adapters.StringDeepTreeViewAdapter;
 import am.android.example.android.deeptreeview.nodes.LeafNode;
 
-public class MainActivity extends ListActivity{
+public class MainActivity extends ListActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,20 +18,20 @@ public class MainActivity extends ListActivity{
         new CreateAdapterDataThread(7).run();
     }
 
-    private void fillListView(final List<LeafNode<String>> rootNodes){
+    private void fillListView(final List<LeafNode<String>> rootNodes) {
         this.runOnUiThread(new Runnable() {
-                               @Override
-                               public void run() {
-                                   StringDeepTreeViewAdapter adapter = new StringDeepTreeViewAdapter(rootNodes, MainActivity.this);
-                                   getListView().setAdapter(adapter);
-                               }
-                           });
+            @Override
+            public void run() {
+                StringDeepTreeViewAdapter adapter = new StringDeepTreeViewAdapter(rootNodes, MainActivity.this);
+                getListView().setAdapter(adapter);
+            }
+        });
     }
 
     private final class CreateAdapterDataThread extends Thread {
         private int mMaxLevel;
+
         public CreateAdapterDataThread(int maxLevel) {
-            super();
             mMaxLevel = maxLevel;
         }
 
