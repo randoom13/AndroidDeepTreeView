@@ -13,14 +13,20 @@ public class LeafNode<T> {
     protected List<LeafNode<T>> mChildren = new ArrayList<LeafNode<T>>();
     protected boolean mIsExpanded = false;
     private T mData;
-    private NodeEventMessanger mEventMessanger;
+    private NodeEventMessenger mEventMessenger;
     private boolean mAutoUpdate = true;
+
+    public LeafNode(T data) {
+        mParent = null;
+        mData = data;
+        updateSelfFlatList();
+    }
 
     public LeafNode(boolean hasEventMessenger) {
         mParent = null;
         updateSelfFlatList();
         if (hasEventMessenger)
-            mEventMessanger = new NodeEventMessanger();
+            mEventMessenger = new NodeEventMessenger();
     }
 
     public LeafNode() {
@@ -39,15 +45,15 @@ public class LeafNode<T> {
         this.mData = data;
     }
 
-    public NodeEventMessanger getEventMessanger() {
-        return mEventMessanger;
+    public NodeEventMessenger getEventMessenger() {
+        return mEventMessenger;
     }
 
     void notifyExpanded(NodeEventArgs args) {
-        if (mEventMessanger != null)
-            mEventMessanger.notifyNodeExpanded(this, args);
+        if (mEventMessenger != null)
+            mEventMessenger.notifyNodeExpanded(this, args);
 
-        if (args.isHandled() || args.getSource() != this)
+        if (args.isHandled() || args.source != this)
             return;
 
         LeafNode<T> currentNode = this;
@@ -61,10 +67,10 @@ public class LeafNode<T> {
     }
 
     void notifyCollapsed(NodeEventArgs args) {
-        if (mEventMessanger != null)
-            mEventMessanger.notifyNodeCollapsed(this, args);
+        if (mEventMessenger != null)
+            mEventMessenger.notifyNodeCollapsed(this, args);
 
-        if (args.isHandled() || args.getSource() != this)
+        if (args.isHandled() || args.source != this)
             return;
 
         LeafNode<T> currentNode = this;
@@ -78,9 +84,9 @@ public class LeafNode<T> {
     }
 
     void notifyFlatListUpdated(NodeEventArgs args) {
-        if (mEventMessanger != null)
-            mEventMessanger.notifyNodeTreeListUpdate(this, args);
-        if (args.isHandled() || args.getSource() != this)
+        if (mEventMessenger != null)
+            mEventMessenger.notifyNodeTreeListUpdate(this, args);
+        if (args.isHandled() || args.source != this)
             return;
 
         LeafNode<T> currentNode = this;
@@ -153,7 +159,7 @@ public class LeafNode<T> {
         return node;
     }
 
-    public void remove(LeafNode<T> child) {
+    public <B extends LeafNode<T>> void remove(B child) {
         throw new UnsupportedOperationException();
     }
 
@@ -161,7 +167,7 @@ public class LeafNode<T> {
         throw new UnsupportedOperationException();
     }
 
-    public void add(LeafNode<T> child) {
+    public <B extends LeafNode<T>> void add(B child) {
         throw new UnsupportedOperationException();
     }
 
@@ -210,11 +216,11 @@ public class LeafNode<T> {
             return location;
         }
 
-        public static <T> void collapseAll(LeafNode<T> node, boolean isOnlyVisible) {
-            List<LeafNode<T>> visitedNodes = new ArrayList<LeafNode<T>>();
+        public static void collapseAll(LeafNode node, boolean isOnlyVisible) {
+            List<LeafNode> visitedNodes = new ArrayList<LeafNode>();
             visitedNodes.add(node);
             while (!visitedNodes.isEmpty()) {
-                LeafNode<T> currentNode = visitedNodes.remove(0);
+                LeafNode currentNode = visitedNodes.remove(0);
                 if (!currentNode.getCanExpanded())
                     continue;
                 if (!isOnlyVisible || currentNode.isExpanded())
@@ -231,14 +237,15 @@ public class LeafNode<T> {
             int maxLevel = 0;
             while (!visitedNodes.isEmpty()) {
                 LeafNode<T> currentNode = visitedNodes.remove(0);
-                if (currentNode.getCanExpanded()) {
-                    visitedNodes.addAll(currentNode.mChildren);
-                    if (!currentNode.isExpanded()) {
-                        collapsedNodes.add(currentNode);
-                        int childLevel = currentNode.getLevel();
-                        if (maxLevel < childLevel)
-                            maxLevel = childLevel;
-                    }
+                if (currentNode.getCanExpanded())
+                    continue;
+
+                visitedNodes.addAll(currentNode.mChildren);
+                if (!currentNode.isExpanded()) {
+                    collapsedNodes.add(currentNode);
+                    int childLevel = currentNode.getLevel();
+                    if (maxLevel < childLevel)
+                        maxLevel = childLevel;
                 }
             }
 

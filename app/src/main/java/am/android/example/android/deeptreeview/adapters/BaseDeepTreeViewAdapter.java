@@ -1,6 +1,6 @@
 package am.android.example.android.deeptreeview.adapters;
 
-import android.app.Activity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -14,25 +14,25 @@ import am.android.example.android.deeptreeview.nodes.listeners.NodeEventArgs;
 import am.android.example.android.deeptreeview.nodes.listeners.NodeFlatListUpdateListener;
 
 public abstract class BaseDeepTreeViewAdapter<T, H extends ViewHolder> extends BaseAdapter {
-    private final Activity mActivity;
+    private final LayoutInflater mInflater;
     private List<LeafNode<T>> mRootNodes;
 
-    public BaseDeepTreeViewAdapter(List<LeafNode<T>> rootNode, Activity activity) {
+    public BaseDeepTreeViewAdapter(List<LeafNode<T>> rootNode, LayoutInflater inflater) {
         super();
         mRootNodes = rootNode;
-        mActivity = activity;
+        mInflater = inflater;
     }
 
     protected void bind(LeafNode<T> node, H holder) {
         int arrowState = node.isExpanded() ? R.string.ic_keyboard_arrow_down : R.string.ic_keyboard_arrow_right;
-        holder.getIcon().setIconText(mActivity.getResources().getString(arrowState));
+        holder.icon.setIconText(holder.icon.getResources().getString(arrowState));
         if (node.getCanExpanded()) {
-            holder.getIcon().setVisibility(View.VISIBLE);
+            holder.icon.setVisibility(View.VISIBLE);
 
         } else {
-            holder.getIcon().setVisibility(View.INVISIBLE);
+            holder.icon.setVisibility(View.INVISIBLE);
         }
-        holder.getMain().setPadding(20 * node.getLevel(), 0, 0, 0);
+        holder.main.setPadding(20 * node.getLevel(), 0, 0, 0);
     }
 
     abstract protected H createViewHolder(View row);
@@ -41,20 +41,22 @@ public abstract class BaseDeepTreeViewAdapter<T, H extends ViewHolder> extends B
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
         if (row == null)
-            row = mActivity.getLayoutInflater().inflate(R.layout.list_item, parent, false);
+            row = mInflater.inflate(R.layout.list_item, parent, false);
         H holder = (H) row.getTag();
         if (holder == null) {
             holder = createViewHolder(row);
             row.setTag(holder);
         }
         final LeafNode<T> node = (LeafNode<T>) getItem(position);
+
         bind(node, holder);
-        row.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new UpdateTreeThread(node).run();
-            }
-        });
+        if (node.getCanExpanded())
+            row.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    new UpdateTreeThread(node, v).start();
+                }
+            });
         return row;
     }
 
@@ -93,41 +95,39 @@ public abstract class BaseDeepTreeViewAdapter<T, H extends ViewHolder> extends B
         return 0;
     }
 
-    void notifyVisibleItemsChanged() {
-        mActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                notifyDataSetChanged();
-            }
-        });
-    }
 
     private class UpdateTreeThread extends Thread {
-        private LeafNode<T> mNode;
+        private final LeafNode mNode;
+        private final View mRow;
 
-        public UpdateTreeThread(LeafNode<T> node) {
+        public UpdateTreeThread(LeafNode node, View row) {
             super();
             mNode = node;
+            mRow = row;
         }
 
         @Override
         public void run() {
-            if (!mNode.getCanExpanded())
-                return;
-
             LeafNode rootNode = mNode.getTopParent();
             if (rootNode == null)
                 rootNode = mNode;
 
-            rootNode.getEventMessanger().subscribe(new NodeFlatListUpdateListener() {
+            rootNode.getEventMessenger().subscribe(new NodeFlatListUpdateListener() {
                 @Override
                 public void nodeFlatListUpdated(Object sender, NodeEventArgs args) {
                     if (args.isFlatListChanged())
-                        notifyVisibleItemsChanged();
+                        mRow.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                notifyDataSetChanged();
+                            }
+                        });
+
                     args.setHandled(true);
                 }
             });
             mNode.setIsExpanded(!mNode.isExpanded());
+            rootNode.getEventMessenger().unSubscribeTreeUpdateListener();
         }
     }
 }

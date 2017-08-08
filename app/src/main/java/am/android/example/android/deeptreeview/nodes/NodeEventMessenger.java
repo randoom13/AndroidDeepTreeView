@@ -5,7 +5,7 @@ import am.android.example.android.deeptreeview.nodes.listeners.NodeEventArgs;
 import am.android.example.android.deeptreeview.nodes.listeners.NodeExpandedListener;
 import am.android.example.android.deeptreeview.nodes.listeners.NodeFlatListUpdateListener;
 
-public class NodeEventMessanger {
+public class NodeEventMessenger {
 
     private NodeCollapsedListener mNodeCollapsedListener = null;
     private NodeExpandedListener mNodeExpandedListener = null;

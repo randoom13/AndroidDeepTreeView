@@ -15,30 +15,30 @@ public class MainActivity extends ListActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        new CreateAdapterDataThread(7).run();
+        new CreateAdapterDataThread(4).start();
     }
 
     private void fillListView(final List<LeafNode<String>> rootNodes) {
+        final StringDeepTreeViewAdapter adapter = new StringDeepTreeViewAdapter(rootNodes, getLayoutInflater());
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                StringDeepTreeViewAdapter adapter = new StringDeepTreeViewAdapter(rootNodes, MainActivity.this);
                 getListView().setAdapter(adapter);
             }
         });
     }
 
     private final class CreateAdapterDataThread extends Thread {
-        private int mMaxLevel;
+        private int mMaxDeepLevel;
 
-        public CreateAdapterDataThread(int maxLevel) {
-            mMaxLevel = maxLevel;
+        public CreateAdapterDataThread(int maxDeepLevel) {
+            mMaxDeepLevel = maxDeepLevel;
         }
 
         @Override
         public void run() {
             List<LeafNode<String>> rootNodes = new ArrayList<LeafNode<String>>();
-            rootNodes.add(DummyNodesFactory.getRootNode(mMaxLevel));
+            rootNodes.add(DummyNodesFactory.getRootNode(mMaxDeepLevel));
             fillListView(rootNodes);
         }
     }

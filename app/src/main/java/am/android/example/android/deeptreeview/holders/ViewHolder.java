@@ -6,14 +6,10 @@ import android.widget.TextView;
 import am.android.example.android.deeptreeview.R;
 
 public class ViewHolder extends BaseViewHolder {
-    private final TextView mTitle;
+    public final TextView title;
 
     public ViewHolder(View row) {
         super(row);
-        mTitle = (TextView) row.findViewById(R.id.title);
-    }
-
-    public TextView getTitle() {
-        return mTitle;
+        title = (TextView) row.findViewById(R.id.title);
     }
 }

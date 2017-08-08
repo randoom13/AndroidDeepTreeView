@@ -13,11 +13,14 @@ public class TreeNode<T> extends LeafNode<T> {
         super();
     }
 
+    public TreeNode(T data) {
+        super(data);
+    }
     public TreeNode(boolean hasEventMessanger) {
         super(hasEventMessanger);
     }
 
-    private void detach(LeafNode<T> child) {
+    private <B extends LeafNode<T>>  void detach(B child) {
         if (!isTop(child))
             if (child.mParent.mChildren.contains(child)) {
                 child.mParent.remove(child);
@@ -50,6 +53,10 @@ public class TreeNode<T> extends LeafNode<T> {
             parent.removeAll(removingChildren);
             detachingChildren.removeAll(removingChildren);
         }
+    }
+
+    public<B extends LeafNode<T>> int indexOf(B child) {
+        return (mChildren.isEmpty()) ? -1 : mChildren.indexOf(child);
     }
 
     @Override
@@ -90,7 +97,7 @@ public class TreeNode<T> extends LeafNode<T> {
     }
 
     @Override
-    public void remove(LeafNode<T> child) {
+    public <B extends LeafNode<T>> void remove(B child) {
         mChildren.remove(child);
         child.mParent = null;
         if (isExpanded())
@@ -106,7 +113,7 @@ public class TreeNode<T> extends LeafNode<T> {
             updateFlatList();
     }
 
-    public void attach(LeafNode<T> child) {
+    public <B extends LeafNode<T>> void attach(B child) {
         mChildren.add(child);
         child.mParent = this;
         if (isExpanded())
@@ -115,7 +122,7 @@ public class TreeNode<T> extends LeafNode<T> {
 
 
     @Override
-    public void add(LeafNode<T> child) {
+    public <B extends LeafNode<T>> void add(B child) {
         detach(child);
         attach(child);
     }

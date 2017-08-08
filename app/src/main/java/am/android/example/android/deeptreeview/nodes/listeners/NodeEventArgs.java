@@ -2,12 +2,12 @@ package am.android.example.android.deeptreeview.nodes.listeners;
 
 public class NodeEventArgs<T> {
     private boolean mIsHandled;
-    private T mSource;
+    public T source;
     private boolean isFlatListChanged;
 
     public NodeEventArgs(T source) {
         super();
-        mSource = source;
+        this.source = source;
         setFlatListChanged(true);
     }
 
@@ -17,10 +17,6 @@ public class NodeEventArgs<T> {
 
     public void setHandled(boolean handled) {
         mIsHandled = handled;
-    }
-
-    public T getSource() {
-        return mSource;
     }
 
     public boolean isFlatListChanged() {
