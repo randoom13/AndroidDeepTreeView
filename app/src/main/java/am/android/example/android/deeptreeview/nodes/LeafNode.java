@@ -230,13 +230,13 @@ public class LeafNode<T> {
             }
         }
 
-        public static <T> void expandAll(LeafNode<T> node) {
-            List<LeafNode<T>> collapsedNodes = new ArrayList<LeafNode<T>>();
-            List<LeafNode<T>> visitedNodes = new ArrayList<LeafNode<T>>();
+        public static void expandAll(LeafNode node) {
+            List<LeafNode> collapsedNodes = new ArrayList<LeafNode>();
+            List<LeafNode> visitedNodes = new ArrayList<LeafNode>();
             visitedNodes.add(node);
             int maxLevel = 0;
             while (!visitedNodes.isEmpty()) {
-                LeafNode<T> currentNode = visitedNodes.remove(0);
+                LeafNode currentNode = visitedNodes.remove(0);
                 if (currentNode.getCanExpanded())
                     continue;
 
@@ -254,7 +254,7 @@ public class LeafNode<T> {
 
             for (int level = maxLevel; level >= 0; level--) {
                 for (int index = collapsedNodes.size() - 1; index >= 0; index--) {
-                    LeafNode<T> currentNode = collapsedNodes.get(index);
+                    LeafNode currentNode = collapsedNodes.get(index);
                     if (currentNode.getLevel() == level) {
                         currentNode.setIsExpanded(true);
                         collapsedNodes.remove(currentNode);

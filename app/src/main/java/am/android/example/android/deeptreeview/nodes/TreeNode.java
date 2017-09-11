@@ -16,11 +16,12 @@ public class TreeNode<T> extends LeafNode<T> {
     public TreeNode(T data) {
         super(data);
     }
+
     public TreeNode(boolean hasEventMessanger) {
         super(hasEventMessanger);
     }
 
-    private <B extends LeafNode<T>>  void detach(B child) {
+    private <B extends LeafNode<T>> void detach(B child) {
         if (!isTop(child))
             if (child.mParent.mChildren.contains(child)) {
                 child.mParent.remove(child);
@@ -55,8 +56,8 @@ public class TreeNode<T> extends LeafNode<T> {
         }
     }
 
-    public<B extends LeafNode<T>> int indexOf(B child) {
-        return (mChildren.isEmpty()) ? -1 : mChildren.indexOf(child);
+    public <B extends LeafNode<T>> int indexOf(B child) {
+        return mChildren.isEmpty() ? -1 : mChildren.indexOf(child);
     }
 
     @Override
